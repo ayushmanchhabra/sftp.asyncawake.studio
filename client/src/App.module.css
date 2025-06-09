@@ -1,0 +1,67 @@
+.View {
+    height: 100vh;
+    width: 100vw;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.Button {
+    height: 40px;
+    width: 100px;
+
+    border: 1px solid grey;
+    background-color: white;
+    color: grey;
+}
+
+.Button:hover {
+    background-color: lightgrey;
+    cursor: pointer;
+}
+
+.file-upload {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+.fileUpload input[type="file"] {
+    display: none;
+}
+
+.customButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 18px;
+    border: none;
+    cursor: pointer;
+}
+
+.custom-button:hover {
+    background-color: #0056b3;
+}
+
+#file-name {
+    margin-top: 10px;
+    font-family: Arial, sans-serif;
+}
+
+.fileKey {
+    font-weight: bold;
+    color: #333;
+}
