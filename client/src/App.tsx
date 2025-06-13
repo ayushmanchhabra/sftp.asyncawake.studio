@@ -25,20 +25,28 @@ function App() {
   };
 
   const handleFileDownload = () => {
-    service.http.post('/api/v1/file/download', {
+    let fileName = '';
+    service.http.post('/api/v1/file/info', {
+      filename: keyInput
+    })
+      .then(response => {
+        fileName = response.data.filename;
+      }).then(() => {
+        service.http.post('/api/v1/file/download', {
       filename: keyInput,
     })
       .then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', keyInput);
+        link.setAttribute('download', fileName);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
       })
       .catch(error => {
         console.error('Error downloading file:', error);
+      });
       });
   };
 

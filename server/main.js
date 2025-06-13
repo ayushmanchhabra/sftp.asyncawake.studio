@@ -14,8 +14,6 @@ function upload(req, res) {
 
     const file = req.file;
 
-    console.log(file)
-
     const srcPath = path.resolve(file.path);
     const outPath = path.resolve('uploads', `${file.filename}_${file.originalname}`);
 
@@ -54,6 +52,26 @@ function download(req, res) {
     }
 
 }
+
+function info (req, res) {
+    const filename = req.body.filename;
+    const files = fs.readdirSync('uploads/');
+    
+    for (const file of files) {
+        const currentFilename = file.split('_')[0];
+        if (currentFilename === filename) {
+            const filePath = path.resolve('uploads', file);
+            const stats = fs.statSync(filePath);
+            const fileInfo = {
+                filename: file.split('_')[1],
+                size: stats.size,
+            };
+            return res.status(200).json(fileInfo);
+        }
+    }
+
+    res.status(200).json(fileInfo);
+} 
 
 /**
  * 
@@ -95,6 +113,7 @@ export async function main() {
     const router = await setupServer(express());
     router.post('/api/v1/file/upload', uploader.single('file'), upload);
     router.post('/api/v1/file/download', download);
+    router.post('/api/v1/file/info', info);
 
     router.listen(SERVER_PORT, SERVER_HOST, function () {
         console.log(`Listening on http://${SERVER_HOST}:${SERVER_PORT}`)
