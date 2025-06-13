@@ -1,4 +1,4 @@
-# File Sharing application
+# Secure file sharing service
 
 ## Getting Started
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Button, Switch, TextField, Typography } from '@mui/material';
+import { Button, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 
 import style from './App.module.css';
@@ -9,7 +9,6 @@ import service from './services';
 function App() {
 
   const [file, setFile] = React.useState<File | null>(null);
-  const [preview, setPreview] = React.useState<any>(false);
   const [fileKey, setFileKey] = React.useState<string | null>(null);
   const [keyInput, setKeyInput] = React.useState<string>('');
   const [mode, setMode] = React.useState<'download' | 'upload'>('upload');
@@ -18,7 +17,6 @@ function App() {
     event.preventDefault();
     if (event.target.files !== null) {
       setFile(event.target.files[0]);
-      setPreview(URL.createObjectURL(event.target.files[0]));
     } else {
       setFile(null);
     }
@@ -33,20 +31,20 @@ function App() {
         fileName = response.data.filename;
       }).then(() => {
         service.http.post('/api/v1/file/download', {
-      filename: keyInput,
-    })
-      .then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', fileName);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      })
-      .catch(error => {
-        console.error('Error downloading file:', error);
-      });
+          filename: keyInput,
+        })
+          .then(response => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', fileName);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          })
+          .catch(error => {
+            console.error('Error downloading file:', error);
+          });
       });
   };
 
@@ -62,7 +60,6 @@ function App() {
       .then(response => {
         console.log('File uploaded successfully:', response.data);
         setFile(null);
-        setPreview(false);
         setFileKey(response.data.file);
       })
       .catch(error => {
@@ -97,7 +94,6 @@ function App() {
             onChange={function (event: React.ChangeEvent<HTMLInputElement>) {
               setMode(event.target.checked ? 'upload' : 'download');
               setFile(null);
-              setPreview(false);
               setFileKey(null);
             }}
           />
@@ -144,30 +140,24 @@ function App() {
         <br />
 
         {file && (
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Size</th>
-                <th>Type</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{file.name}</td>
-                <td>{(file.size / 1024).toFixed(2)} KB</td>
-                <td>{file.type || 'N/A'}</td>
-              </tr>
-            </tbody>
-          </table>
-        )}
-
-        <br />
-
-        {preview && (
-          <div className="preview-container">
-            <img src={preview} alt="Preview" className="preview-image" />
-          </div>
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Size</TableCell>
+                  <TableCell>Type</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                <TableRow>
+                  <TableCell>{file.name}</TableCell>
+                  <TableCell>{(file.size / 1024).toFixed(2)} KB</TableCell>
+                  <TableCell>{file.type || 'N/A'}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </TableContainer>
         )}
 
         <br />
