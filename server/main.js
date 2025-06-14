@@ -8,7 +8,6 @@ import helmet from 'helmet';
 import multer from 'multer';
 
 config();
-const uploader = multer({ dest: 'uploads/' })
 
 function upload(req, res) {
 
@@ -53,11 +52,11 @@ function download(req, res) {
 
 }
 
-function info (req, res) {
+function info(req, res) {
     const filename = req.body.filename;
     const files = fs.readdirSync('uploads/');
     let fileInfo = undefined;
-    
+
     for (const file of files) {
         const currentFilename = file.split('_')[0];
         if (currentFilename === filename) {
@@ -72,7 +71,7 @@ function info (req, res) {
     }
 
     res.status(200).json(fileInfo);
-} 
+}
 
 /**
  * 
@@ -99,9 +98,13 @@ async function setupServer(router) {
     }))
     router.use(express.json());
     router.use(helmet());
-    router.use((err, req, res) => {
-        console.error(err.stack)
-        res.status(500).send('500 Internal Server Error')
+    router.use((err, req, res, next) => {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+            // Multer throws error when the file size exceeds the limit
+            return res.status(413).json({ message: 'File size exceeds the limit of 1 GB' });
+        } else {
+            return res.status(500).json({ message: '500 Internal Server Error' })
+        }
     })
 
     return router;
@@ -110,6 +113,17 @@ async function setupServer(router) {
 export async function main() {
     const SERVER_HOST = process.env.SERVER_HOST;
     const SERVER_PORT = process.env.SERVER_PORT;
+
+    if (process.env.FILE_UPLOAD_DIR === undefined) {
+        throw new Error('FILE_UPLOAD_DIR environment variable has not been set.');
+    }
+
+    const uploader = multer({
+        dest: process.env.FILE_UPLOAD_DIR,
+        limits: {
+            fileSize: 1 * 1024 * 1024 * 1024, // 1 GB in bytes
+        },
+    });
 
     const router = await setupServer(express());
     router.post('/api/v1/file/upload', uploader.single('file'), upload);

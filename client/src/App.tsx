@@ -13,11 +13,17 @@ function App() {
   const [keyInput, setKeyInput] = React.useState<string>('');
   const [mode, setMode] = React.useState<'download' | 'upload'>('upload');
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     if (event.target.files !== null) {
-      setFile(event.target.files[0]);
+      const currentFile = event.target.files[0];
+      if (currentFile.size > 1 * 1024 * 1024 * 1024) {
+        setError('File size exceeds 1GB limit.');
+      } else {
+        setFile(currentFile);
+      }
     } else {
       setFile(null);
     }
@@ -46,6 +52,9 @@ function App() {
           })
           .catch(error => {
             console.error('Error downloading file:', error);
+          })
+          .finally(() => {
+            setIsLoading(false);
           });
       });
   };
@@ -60,7 +69,6 @@ function App() {
       },
     })
       .then(response => {
-        console.log('File uploaded successfully:', response.data);
         setFile(null);
         setFileKey(response.data.file);
       })
@@ -126,7 +134,7 @@ function App() {
             marginBottom: 2,
           }}
         >
-          Upload files
+          Select files
           <VisuallyHiddenInput
             type="file"
             onChange={handleFileChange}
@@ -184,6 +192,8 @@ function App() {
           </TableContainer>
         )}
 
+        {error && <Typography variant="body2" color="error" align="center">{error}</Typography>}
+
         <br />
 
         {file && (
@@ -196,7 +206,7 @@ function App() {
             }}
             type="submit"
           >
-            Submit
+            Upload
           </Button>
         )}
 
