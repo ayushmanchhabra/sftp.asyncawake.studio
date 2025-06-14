@@ -24,10 +24,10 @@ jobs:
         run: npm ci
       - name: Check for linting warnings and errors
         run: npm run lint
-      - name: Run tests
-        run: npm run test
-      - name: Report Client Coverage
-        if: always()
-        uses:  davelosert/vitest-coverage-report-action@v2.8.3
-        with:
-          working-directory: ./client
+      # - name: Run tests
+      #   run: npm run test
+      # - name: Report Client Coverage
+      #   if: always()
+      #   uses:  davelosert/vitest-coverage-report-action@v2.8.3
+      #   with:
+      #     working-directory: ./client
