@@ -140,7 +140,7 @@ function App() {
               label="File Key"
               variant="outlined"
               value={keyInput}
-              onChange={(e: any) => setKeyInput(e.target.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setKeyInput(event.target.value)}
               fullWidth
             />
             <br />
