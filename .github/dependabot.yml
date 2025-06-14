@@ -21,7 +21,7 @@ updates:
   - package-ecosystem: "github-actions"
     directory: ".github/workflows"
     schedule:
-      interval: "daily"
+      interval: "monthly"
     groups:
       gha:
         patterns:
