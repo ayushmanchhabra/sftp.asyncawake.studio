@@ -1,6 +1,6 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Button, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
+import { Button, CircularProgress, Switch, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
 import { CloudUpload as CloudUploadIcon } from '@mui/icons-material';
 
 import style from './App.module.css';
@@ -12,6 +12,7 @@ function App() {
   const [fileKey, setFileKey] = React.useState<string | null>(null);
   const [keyInput, setKeyInput] = React.useState<string>('');
   const [mode, setMode] = React.useState<'download' | 'upload'>('upload');
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
@@ -24,6 +25,7 @@ function App() {
 
   const handleFileDownload = () => {
     let fileName = '';
+    setIsLoading(true);
     service.http.post('/api/v1/file/info', {
       filename: keyInput
     })
@@ -64,6 +66,9 @@ function App() {
       })
       .catch(error => {
         console.error('Error uploading file:', error);
+      })
+      .finally(() => {
+        setIsLoading(false)
       });
   }
 
@@ -87,6 +92,12 @@ function App() {
         onSubmit={handleSubmit}
       >
 
+        <Typography variant="h5" gutterBottom>
+          SFTP - A secure file sharing service
+        </Typography>
+
+        <br />
+
         <Typography>
           Download
           <Switch
@@ -105,9 +116,15 @@ function App() {
         {mode === 'upload' && (<Button
           component="label"
           role={undefined}
-          variant="contained"
+          variant="outlined"
           tabIndex={-1}
           startIcon={<CloudUploadIcon />}
+          sx={{
+            width: 300,
+            backgroundColor: '#9370db',
+            color: 'white',
+            marginBottom: 2,
+          }}
         >
           Upload files
           <VisuallyHiddenInput
@@ -128,9 +145,16 @@ function App() {
             />
             <br />
             <Button
-              variant="contained"
+              disabled={isLoading}
+              variant="outlined"
               color="primary"
               onClick={handleFileDownload}
+              sx={{
+                width: 300,
+                backgroundColor: '#9370db',
+                color: 'white',
+                marginBottom: 2,
+              }}
             >
               Download File
             </Button>
@@ -163,7 +187,15 @@ function App() {
         <br />
 
         {file && (
-          <Button type="submit" className={style.Button}>
+          <Button
+            sx={{
+              width: 300,
+              backgroundColor: '#9370db',
+              color: 'white',
+              marginBottom: 2,
+            }}
+            type="submit"
+          >
             Submit
           </Button>
         )}
@@ -174,7 +206,14 @@ function App() {
           </div>
         )}
 
+        {isLoading && <CircularProgress />}
+
       </form>
+
+      <Typography variant="body2" color="textSecondary" align="center">
+        (c) Async Awake Studio
+      </Typography>
+
     </div>
   )
 }
