@@ -56,13 +56,14 @@ function download(req, res) {
 function info (req, res) {
     const filename = req.body.filename;
     const files = fs.readdirSync('uploads/');
+    let fileInfo = undefined;
     
     for (const file of files) {
         const currentFilename = file.split('_')[0];
         if (currentFilename === filename) {
             const filePath = path.resolve('uploads', file);
             const stats = fs.statSync(filePath);
-            const fileInfo = {
+            fileInfo = {
                 filename: file.split('_')[1],
                 size: stats.size,
             };
@@ -98,7 +99,7 @@ async function setupServer(router) {
     }))
     router.use(express.json());
     router.use(helmet());
-    router.use((err, req, res, next) => {
+    router.use((err, req, res) => {
         console.error(err.stack)
         res.status(500).send('500 Internal Server Error')
     })
