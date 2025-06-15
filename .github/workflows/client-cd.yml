@@ -13,8 +13,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  publish:
+  cd:
     runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./client
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4.2.2
