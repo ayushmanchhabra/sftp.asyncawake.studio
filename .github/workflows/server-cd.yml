@@ -1,7 +1,7 @@
 name: server-cd
 
 on:
-  push:
+  pull_request:
     branches: [ main ]
 
 permissions:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh/
-          printf "%s\n" "$SSH_PRIVATE_KEY" > ./deploy.key
+          printf "%s\n" "${SSH_PRIVATE_KEY}" > ./deploy.key
           chmod 600 ./deploy.key
           echo "${SSH_KNOWN_HOSTS}" >> ~/.ssh/known_hosts
 
