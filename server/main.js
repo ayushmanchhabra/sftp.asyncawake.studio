@@ -17,6 +17,7 @@ function upload(req, res) {
     const outPath = path.resolve('uploads', `${file.filename}_${file.originalname}`);
 
     fs.renameSync(srcPath, outPath);
+    fs.chmodSync(outPath, 0o444);
 
     res.status(200).json({
         file: req.file.filename,
