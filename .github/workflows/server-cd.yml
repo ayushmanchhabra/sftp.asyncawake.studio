@@ -1,0 +1,36 @@
+name: server-cd
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  cd:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: ./server
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh/
+          printf "%s\n" "$SSH_PRIVATE_KEY" > ./deploy.key
+          chmod 600 ./deploy.key
+          echo "${SSH_KNOWN_HOSTS}" >> ~/.ssh/known_hosts
+
+      - name: Install PM2
+        run: npm i -g pm2
+
+      - name: Deploy using PM2
+        run: |
+          scp -i ./deploy.key -r ./* root@139.59.72.34:/root/server
+          ssh -i ./deploy.key root@139.59.72.34 "cd /root/server && npm install && pm2 restart ecosystem.config.cjs"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
