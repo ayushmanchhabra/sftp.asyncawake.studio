@@ -22,7 +22,10 @@ jobs:
           mkdir -p ~/.ssh/
           printf "%s\n" "${SSH_PRIVATE_KEY}" > ./deploy.key
           chmod 600 ./deploy.key
-          printf "%s\n" $( ssh-keyscan -H 139.59.72.34 ) >> ~/.ssh/known_hosts
+          printf "%s\n" "${SSH_KNOWN_HOSTS}" >> ~/.ssh/known_hosts
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Install PM2
         run: npm i -g pm2
@@ -31,6 +34,3 @@ jobs:
         run: |
           scp -i ./deploy.key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./* root@139.59.72.34:/root/server
           ssh -i ./deploy.key -o StrictHostKeyChecking=no root@139.59.72.34 "rm -rf /root/server && cd /root/server && npm install && pm2 restart ecosystem.config.cjs"
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
