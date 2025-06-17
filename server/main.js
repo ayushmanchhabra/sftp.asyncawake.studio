@@ -99,6 +99,7 @@ async function setupServer(router) {
     }))
     router.use(express.json());
     router.use(helmet());
+    // eslint-disable-next-line no-unused-vars
     router.use((err, req, res, next) => {
         if (err.code === 'LIMIT_FILE_SIZE') {
             // Multer throws error when the file size exceeds the limit
