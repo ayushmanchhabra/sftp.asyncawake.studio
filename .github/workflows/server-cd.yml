@@ -1,4 +1,4 @@
-name: server-cd
+name: server
 
 on:
   push:

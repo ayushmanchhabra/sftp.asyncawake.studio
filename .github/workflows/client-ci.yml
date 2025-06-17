@@ -1,4 +1,4 @@
-name: client-ci
+name: client
 
 on:
   pull_request:
