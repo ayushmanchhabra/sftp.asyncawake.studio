@@ -22,7 +22,7 @@ jobs:
           mkdir -p ~/.ssh/
           printf "%s\n" "${SSH_PRIVATE_KEY}" > ./deploy.key
           chmod 600 ./deploy.key
-          printf "%s\n" "${SSH_KNOWN_HOSTS}" >> ~/.ssh/known_hosts
+          printf "%s\n" $( ssh-keyscan -H 139.59.72.34 ) >> ~/.ssh/known_hosts
 
       - name: Install PM2
         run: npm i -g pm2
