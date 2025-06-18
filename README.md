@@ -24,7 +24,7 @@
 - [ ] when user provides file key, file is decrypted and sent to user
 - [ ] file is decrypted on client side
 - [ ] implement rate limiting
-- [ ] implement captcha response
+- [ ] implement CAPTCHA response
 
 ## Contributing
 
