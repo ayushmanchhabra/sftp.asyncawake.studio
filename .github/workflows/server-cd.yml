@@ -23,6 +23,11 @@ jobs:
           printf "%s\n" "SERVER_PORT=${SERVER_PORT}" >> ./env
           printf "%s\n" "CLIENT_ORIGIN=${CLIENT_ORIGIN}" >> ./env
           printf "%s\n" "FILE_UPLOAD_DIR=${FILE_UPLOAD_DIR}" >> ./env
+        env:  
+          SERVER_HOST: ${{ secrets.SERVER_HOST }}
+          SERVER_PORT: ${{ secrets.SERVER_PORT }}
+          CLIENT_ORIGIN: ${{ secrets.CLIENT_ORIGIN }}
+          FILE_UPLOAD_DIR: ${{ secrets.FILE_UPLOAD_DIR }}
 
       - name: Set up SSH
         run: |
