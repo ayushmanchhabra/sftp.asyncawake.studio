@@ -30,7 +30,7 @@ function upload(req, res) {
 function download(req, res) {
     const filename = req.body.filename;
 
-    const fileExists = false;
+    let fileExists = false;
 
     const files = fs.readdirSync('uploads/');
 
