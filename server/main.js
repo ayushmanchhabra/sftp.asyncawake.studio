@@ -30,6 +30,8 @@ function upload(req, res) {
 function download(req, res) {
     const filename = req.body.filename;
 
+    const fileExists = false;
+
     const files = fs.readdirSync('uploads/');
 
     for (const file of files) {
@@ -37,6 +39,7 @@ function download(req, res) {
         if (key === filename) {
             const filePath = path.resolve('uploads', file);
             res.download(filePath, function (error) {
+                fileExists = true;
                 if (error) {
                     console.error('Error downloading file:', error);
                     return res.status(500).json('Internal Server Error');
@@ -51,6 +54,10 @@ function download(req, res) {
                 });
             });
         }
+    }
+
+    if (fileExists === false) {
+        return res.status(404).json({ message: 'The requested file does not exist or has already been downloaded.' });
     }
 
 }
@@ -99,7 +106,7 @@ async function setupServer(router) {
     // eslint-disable-next-line no-unused-vars
     router.use((err, req, res, next) => {
         console.error(err.stack);
-        
+
         if (err.code === 'LIMIT_FILE_SIZE') {
             // Multer throws error when the file size exceeds the limit
             return res.status(413).json({ message: 'File size exceeds the limit of 1 GB' });
@@ -113,7 +120,6 @@ async function setupServer(router) {
 
 export async function main() {
     const SERVER_HOST = process.env.SERVER_HOST;
-    const SERVER_PORT = process.env.SERVER_PORT;
     const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
     const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 

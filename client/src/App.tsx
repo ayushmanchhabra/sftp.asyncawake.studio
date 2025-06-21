@@ -51,6 +51,7 @@ function App() {
             document.body.removeChild(link);
           })
           .catch(error => {
+            setError(error.response?.data?.message || 'Failed to download file.');
             console.error('Error downloading file:', error);
           })
           .finally(() => {
