@@ -17,6 +17,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4.2.2
 
+      - name: Setup Environment
+        run: |
+          printf "%s\n" "SERVER_HOST=${SERVER_HOST}" >> ./env
+          printf "%s\n" "SERVER_PORT=${SERVER_PORT}" >> ./env
+          printf "%s\n" "CLIENT_ORIGIN=${CLIENT_ORIGIN}" >> ./env
+          printf "%s\n" "FILE_UPLOAD_DIR=${FILE_UPLOAD_DIR}" >> ./env
+
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh/

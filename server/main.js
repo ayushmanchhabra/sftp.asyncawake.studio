@@ -81,19 +81,14 @@ function info(req, res) {
  */
 async function setupServer(router) {
 
-    const CLIENT_HOST = process.env.CLIENT_HOST;
-    const CLIENT_PORT = process.env.CLIENT_PORT;
+    const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
-    if (CLIENT_HOST === undefined) {
-        throw new Error('CLIENT_HOST environment variable has not been set.');
-    }
-
-    if (CLIENT_PORT === undefined) {
-        throw new Error('CLIENT_PORT environment variable has not been set.');
+    if (CLIENT_ORIGIN === undefined) {
+        throw new Error('CLIENT_ORIGIN environment variable has not been set.');
     }
 
     router.use(cors({
-        origin: `http://${CLIENT_HOST}:${CLIENT_PORT}`,
+        origin: `https://${CLIENT_ORIGIN}`,
         credentials: true,
         optionsSuccessStatus: 200,
     }))
