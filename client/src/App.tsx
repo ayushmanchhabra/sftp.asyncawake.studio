@@ -111,7 +111,7 @@ function App() {
         onSubmit={handleSubmit}
       >
 
-        <Typography variant="h5" gutterBottom>
+        <Typography variant="h5" align='center' gutterBottom>
           SFTP - A secure file sharing service
         </Typography>
 
