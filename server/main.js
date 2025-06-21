@@ -38,7 +38,7 @@ function download(req, res) {
         const key = file.split('_')[0];
         if (key === filename) {
             const filePath = path.resolve('uploads', file);
-            res.download(filePath, function (error) {
+            return res.download(filePath, function (error) {
                 fileExists = true;
                 if (error) {
                     console.error('Error downloading file:', error);
