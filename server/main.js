@@ -122,7 +122,7 @@ export async function main() {
     }
 
     const uploader = multer({
-        dest: process.env.FILE_UPLOAD_DIR,
+        dest: path.resolve(process.env.FILE_UPLOAD_DIR),
         limits: {
             fileSize: 1 * 1024 * 1024 * 1024, // 1 GB in bytes
         },
