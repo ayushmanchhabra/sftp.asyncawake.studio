@@ -17,7 +17,6 @@
 ## Roadmap
 
 - [ ] Create an SSL cert using certbot
-- [ ] ufw allow port 80 and 443
 - [ ] RSA to transport AES key from server to client
 - [ ] AES key to encrypt files and send to server
 - [ ] save files in encrypted form
