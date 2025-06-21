@@ -71,12 +71,22 @@ function App() {
       .then(response => {
         setFile(null);
         setFileKey(response.data.file);
+        return new Promise(resolve => {
+          navigator.clipboard.writeText(response.data.file).then(() => {
+            setError('');
+            resolve(true);
+          })
+          .catch(() => {
+            setError('Failed to copy file key to clipboard.');
+            resolve(false);
+          });
+        })
       })
       .catch(error => {
         console.error('Error uploading file:', error);
       })
       .finally(() => {
-        setIsLoading(false)
+        setIsLoading(false);
       });
   }
 
