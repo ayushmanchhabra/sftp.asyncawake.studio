@@ -33,5 +33,5 @@ jobs:
       - name: Deploy using PM2
         run: |
           scp -i ./deploy.key -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -r ./* root@139.59.72.34:/root/server
-          ssh -i ./deploy.key -o StrictHostKeyChecking=no root@139.59.72.34 "cd /root/server && npm install && pm2 stop ecosystem.config.cjs"
-          # ssh -i ./deploy.key -o StrictHostKeyChecking=no root@139.59.72.34 "cd /root/server && npm install && pm2 restart ecosystem.config.cjs"
+          # ssh -i ./deploy.key -o StrictHostKeyChecking=no root@139.59.72.34 "cd /root/server && npm install && pm2 stop ecosystem.config.cjs"
+          ssh -i ./deploy.key -o StrictHostKeyChecking=no root@139.59.72.34 "cd /root/server && npm install && pm2 restart ecosystem.config.cjs"
