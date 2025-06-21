@@ -19,10 +19,10 @@ jobs:
 
       - name: Setup Environment
         run: |
-          printf "%s\n" "SERVER_HOST=${SERVER_HOST}" >> ./env
-          printf "%s\n" "SERVER_PORT=${SERVER_PORT}" >> ./env
-          printf "%s\n" "CLIENT_ORIGIN=${CLIENT_ORIGIN}" >> ./env
-          printf "%s\n" "FILE_UPLOAD_DIR=${FILE_UPLOAD_DIR}" >> ./env
+          printf "%s\n" "SERVER_HOST=${SERVER_HOST}" >> .env
+          printf "%s\n" "SERVER_PORT=${SERVER_PORT}" >> .env
+          printf "%s\n" "CLIENT_ORIGIN=${CLIENT_ORIGIN}" >> .env
+          printf "%s\n" "FILE_UPLOAD_DIR=${FILE_UPLOAD_DIR}" >> .env
         env:  
           SERVER_HOST: ${{ secrets.SERVER_HOST }}
           SERVER_PORT: ${{ secrets.SERVER_PORT }}
