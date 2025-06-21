@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import http from 'node:http';
+import https from 'node:https';
 import path from 'node:path';
 
 import { config } from 'dotenv';
@@ -81,19 +83,14 @@ function info(req, res) {
  */
 async function setupServer(router) {
 
-    const CLIENT_HOST = process.env.CLIENT_HOST;
-    const CLIENT_PORT = process.env.CLIENT_PORT;
+    const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN;
 
-    if (CLIENT_HOST === undefined) {
-        throw new Error('CLIENT_HOST environment variable has not been set.');
-    }
-
-    if (CLIENT_PORT === undefined) {
-        throw new Error('CLIENT_PORT environment variable has not been set.');
+    if (CLIENT_ORIGIN === undefined) {
+        throw new Error('CLIENT_ORIGIN environment variable has not been set.');
     }
 
     router.use(cors({
-        origin: `http://${CLIENT_HOST}:${CLIENT_PORT}`,
+        origin: `https://${CLIENT_ORIGIN}`,
         credentials: true,
         optionsSuccessStatus: 200,
     }))
@@ -101,6 +98,8 @@ async function setupServer(router) {
     router.use(helmet());
     // eslint-disable-next-line no-unused-vars
     router.use((err, req, res, next) => {
+        console.error(err.stack);
+        
         if (err.code === 'LIMIT_FILE_SIZE') {
             // Multer throws error when the file size exceeds the limit
             return res.status(413).json({ message: 'File size exceeds the limit of 1 GB' });
@@ -115,6 +114,8 @@ async function setupServer(router) {
 export async function main() {
     const SERVER_HOST = process.env.SERVER_HOST;
     const SERVER_PORT = process.env.SERVER_PORT;
+    const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
+    const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 
     if (process.env.FILE_UPLOAD_DIR === undefined) {
         throw new Error('FILE_UPLOAD_DIR environment variable has not been set.');
@@ -132,9 +133,13 @@ export async function main() {
     router.post('/api/v1/file/download', download);
     router.post('/api/v1/file/info', info);
 
-    router.listen(SERVER_PORT, SERVER_HOST, function () {
-        console.log(`Listening on http://${SERVER_HOST}:${SERVER_PORT}`)
-    });
+    const options = {
+        key: fs.readFileSync(SSL_PRIVATE_KEY_PATH),
+        cert: fs.readFileSync(SSL_CERTIFICATE_PATH)
+    };
+
+    http.createServer(router).listen(80, SERVER_HOST);
+    https.createServer(options, router).listen(443, SERVER_HOST);
 
     return router;
 }
