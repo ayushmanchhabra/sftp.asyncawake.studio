@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import http from 'node:http';
 import https from 'node:https';
 import path from 'node:path';
 
@@ -73,7 +72,7 @@ function info(req, res) {
             const filePath = path.resolve('uploads', file);
             const stats = fs.statSync(filePath);
             fileInfo = {
-                filename: file.split('_')[1],
+                filename: file.split('_').slice(1).join('_'),
                 size: stats.size,
             };
             return res.status(200).json(fileInfo);
@@ -144,8 +143,10 @@ export async function main() {
         cert: fs.readFileSync(SSL_CERTIFICATE_PATH)
     };
 
-    http.createServer(router).listen(80, SERVER_HOST);
-    https.createServer(options, router).listen(443, SERVER_HOST);
+    const server = https.createServer(options, router);
+    server.listen(8443, SERVER_HOST, () => {
+        console.log(`Server listening on https://${SERVER_HOST}:8443`);
+    });
 
     return router;
 }

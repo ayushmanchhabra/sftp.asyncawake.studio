@@ -37,6 +37,7 @@ function App() {
     })
       .then(response => {
         fileName = response.data.filename;
+        console.log(response.data)
       }).then(() => {
         service.http.post('/api/v1/file/download', {
           filename: keyInput,

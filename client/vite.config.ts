@@ -1,6 +1,7 @@
 import process from 'node:process';
 
 import react from '@vitejs/plugin-react'
+import mkcert from 'vite-plugin-mkcert';
 import { defineConfig, loadEnv } from 'vite'
 
 export default defineConfig(({ mode }) => {
@@ -16,10 +17,14 @@ export default defineConfig(({ mode }) => {
     }
 
     return {
-      plugins: [react()],
+      plugins: [
+        react(),
+        mkcert()
+      ],
       server: {
         host: env.VITE_CLIENT_HOST,
         port: parseInt(env.VITE_CLIENT_PORT),
+        https: true,
       },
     }
   }
