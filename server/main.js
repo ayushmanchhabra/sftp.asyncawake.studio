@@ -144,7 +144,7 @@ export async function main() {
         cert: fs.readFileSync(SSL_CERTIFICATE_PATH)
     };
 
-    router.listen(80, SERVER_HOST);
+    http.createServer(router).listen(80, SERVER_HOST);
     https.createServer(options, router).listen(443, SERVER_HOST);
 
     return router;
