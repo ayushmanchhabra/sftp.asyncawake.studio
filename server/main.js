@@ -6,10 +6,30 @@ import path from 'node:path';
 import { config } from 'dotenv';
 import cors from 'cors';
 import express from 'express';
+import { slowDown } from "express-slow-down";
+import rateLimit from "express-rate-limit";
 import helmet from 'helmet';
 import multer from 'multer';
 
 config();
+
+const rateLimiter = slowDown({
+    /* Time frame for which requests are checked/remembered. */
+    windowMs: 15 * 60 * 1000,
+    /* Allow 5 requests within 15 minutes time frame after which the user will be rate limited. */
+    delayAfter: 5,
+    /* Delay each response by 1000 miliseconds more */
+    delayMs: (hits) => hits * 1000,
+});
+
+const rateLimiterBlock = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 15,                  // Block completely after 10 requests
+    message: { message: "Too many requests, please try again later." },
+    statusCode: 429,
+    standardHeaders: true,    // Return rate limit info in RateLimit-* headers
+    legacyHeaders: false,     // Disable X-RateLimit-* headers
+});
 
 function upload(req, res) {
 
@@ -135,7 +155,7 @@ export async function main() {
     });
 
     const router = await setupServer(express());
-    router.post('/api/upload', uploader.single('file'), upload);
+    router.post('/api/upload', rateLimiter, rateLimiterBlock, uploader.single('file'), upload);
     router.post('/api/download', download);
     router.post('/api/info', info);
 
