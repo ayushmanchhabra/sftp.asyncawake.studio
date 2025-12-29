@@ -97,7 +97,7 @@ async function setupServer(router) {
     }
 
     router.use(cors({
-        origin: `https://${CLIENT_ORIGIN}`,
+        origin: `http://${CLIENT_ORIGIN}:3001`,
         credentials: true,
         optionsSuccessStatus: 200,
     }))
@@ -120,8 +120,8 @@ async function setupServer(router) {
 
 export async function main() {
     const SERVER_HOST = process.env.SERVER_HOST;
-    const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
-    const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
+        const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
+        const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 
     if (process.env.FILE_UPLOAD_DIR === undefined) {
         throw new Error('FILE_UPLOAD_DIR environment variable has not been set.');
@@ -135,16 +135,16 @@ export async function main() {
     });
 
     const router = await setupServer(express());
-    router.post('/api/v1/file/upload', uploader.single('file'), upload);
-    router.post('/api/v1/file/download', download);
-    router.post('/api/v1/file/info', info);
+    router.post('/api/upload', uploader.single('file'), upload);
+    router.post('/api/download', download);
+    router.post('/api/info', info);
 
     const options = {
         key: fs.readFileSync(SSL_PRIVATE_KEY_PATH),
         cert: fs.readFileSync(SSL_CERTIFICATE_PATH)
     };
 
-    http.createServer(router).listen(80, SERVER_HOST);
+    router.listen(80, SERVER_HOST);
     https.createServer(options, router).listen(443, SERVER_HOST);
 
     return router;

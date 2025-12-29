@@ -4,7 +4,7 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "tsc -b && vite build && cp ../.github/CNAME ./dist/CNAME",
     "deploy": "gh-pages -b staging -d ./dist -u \"github-actions-bot <support+actions@github.com>\"",
     "lint": "eslint .",
