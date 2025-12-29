@@ -157,7 +157,7 @@ export async function main() {
     const router = await setupServer(express());
     router.post('/api/upload', rateLimiter, rateLimiterBlock, uploader.single('file'), upload);
     router.post('/api/download', download);
-    router.post('/api/info', info);
+    router.post('/api/info', rateLimiter, rateLimiterBlock, info);
 
     const options = {
         key: fs.readFileSync(SSL_PRIVATE_KEY_PATH),
