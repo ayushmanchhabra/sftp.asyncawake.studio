@@ -16,7 +16,7 @@ jobs:
         working-directory: ./server
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
       - name: Setup Node.js
         uses: volta-cli/action@v4.2.1
       - name: Install third party dependencies
