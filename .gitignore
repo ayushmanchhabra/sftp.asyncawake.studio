@@ -5,5 +5,6 @@ node_modules
 .env
 dist
 ssl
+uploads
 
 tsconfig.*.tsbuildinfo

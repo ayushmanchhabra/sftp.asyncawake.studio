@@ -32,13 +32,13 @@ function App() {
   const handleFileDownload = () => {
     let fileName = '';
     setIsLoading(true);
-    service.http.post('/api/v1/file/info', {
+    service.http.post('/api/info', {
       filename: keyInput
     })
       .then(response => {
         fileName = response.data.filename;
       }).then(() => {
-        service.http.post('/api/v1/file/download', {
+        service.http.post('/api/download', {
           filename: keyInput,
         })
           .then(response => {
@@ -64,7 +64,7 @@ function App() {
     event.preventDefault();
     const formData = new FormData();
     formData.append('file', file as Blob);
-    service.http.post('/api/v1/file/upload', formData, {
+    service.http.post('/api/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

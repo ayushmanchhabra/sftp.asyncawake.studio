@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const http = axios.create({
-    baseURL: 'https://api.asyncawake.studio',
+    baseURL: import.meta.env.VITE_CLIENT_HOST,
     headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',

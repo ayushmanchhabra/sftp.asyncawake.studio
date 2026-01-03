@@ -6,10 +6,30 @@ import path from 'node:path';
 import { config } from 'dotenv';
 import cors from 'cors';
 import express from 'express';
+import { slowDown } from "express-slow-down";
+import rateLimit from "express-rate-limit";
 import helmet from 'helmet';
 import multer from 'multer';
 
 config();
+
+const rateLimiter = slowDown({
+    /* Time frame for which requests are checked/remembered. */
+    windowMs: 15 * 60 * 1000,
+    /* Allow 5 requests within 15 minutes time frame after which the user will be rate limited. */
+    delayAfter: 5,
+    /* Delay each response by 1000 miliseconds more */
+    delayMs: (hits) => hits * 1000,
+});
+
+const rateLimiterBlock = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 15,                  // Block completely after 10 requests
+    message: { message: "Too many requests, please try again later." },
+    statusCode: 429,
+    standardHeaders: true,    // Return rate limit info in RateLimit-* headers
+    legacyHeaders: false,     // Disable X-RateLimit-* headers
+});
 
 function upload(req, res) {
 
@@ -97,7 +117,7 @@ async function setupServer(router) {
     }
 
     router.use(cors({
-        origin: `https://${CLIENT_ORIGIN}`,
+        origin: `http://${CLIENT_ORIGIN}:3001`,
         credentials: true,
         optionsSuccessStatus: 200,
     }))
@@ -120,8 +140,8 @@ async function setupServer(router) {
 
 export async function main() {
     const SERVER_HOST = process.env.SERVER_HOST;
-    const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
-    const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
+        const SSL_PRIVATE_KEY_PATH = process.env.SSL_PRIVATE_KEY_PATH;
+        const SSL_CERTIFICATE_PATH = process.env.SSL_CERTIFICATE_PATH;
 
     if (process.env.FILE_UPLOAD_DIR === undefined) {
         throw new Error('FILE_UPLOAD_DIR environment variable has not been set.');
@@ -135,9 +155,9 @@ export async function main() {
     });
 
     const router = await setupServer(express());
-    router.post('/api/v1/file/upload', uploader.single('file'), upload);
-    router.post('/api/v1/file/download', download);
-    router.post('/api/v1/file/info', info);
+    router.post('/api/upload', rateLimiter, rateLimiterBlock, uploader.single('file'), upload);
+    router.post('/api/download', rateLimiter, rateLimiterBlock, download);
+    router.post('/api/info', rateLimiter, rateLimiterBlock, info);
 
     const options = {
         key: fs.readFileSync(SSL_PRIVATE_KEY_PATH),
